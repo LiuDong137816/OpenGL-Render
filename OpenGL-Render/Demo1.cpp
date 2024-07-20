@@ -1,6 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <filesystem>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -22,7 +23,6 @@ void processInput(GLFWwindow* window);
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
-
 
 int main()
 {
@@ -61,11 +61,12 @@ int main()
     // ------------------------------------
     // vertex shader
     //Shader shader("C:\\Users\\liu18\\source\\repos\\OpenGL-Render\\OpenGL-Render\\OpenGL.Shader");
-    Shader shader("C:\\Users\\liu18\\source\\repos\\OpenGL-Render\\OpenGL-Render/Res/Shaders/OpenGL.Shader");
+    std::string projectPath = std::filesystem::current_path().string();
+    Shader shader(projectPath + "/Res/Shaders/OpenGL.Shader");
     shader.Bind();
     shader.SetUniform4f("u_Color", 0.8f, 0.7f, 0.5f, 1.0f);
 
-    Texture texture("C:/Users/liu18/source/repos/OpenGL-Render/OpenGL-Render/Vendor/stb_image/Retangle.png");
+    Texture texture(projectPath + "/Vendor/stb_image/Retangle.png");
     texture.Bind();
     shader.SetUniform1i("u_Texture", 0);
     
