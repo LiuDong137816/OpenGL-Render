@@ -17,12 +17,17 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+#include "Vendor/imgui/imgui.h"
+#include "Vendor/imgui/imgui_impl_glfw.h"
+#include "Vendor/imgui/imgui_impl_opengl3.h"
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
+const char* glsl_version = "#version 130";
 
 int main()
 {
@@ -105,8 +110,13 @@ int main()
 
 
         IndexBuff ib(indices, 6);
-        glm::mat4 proj = glm::ortho(-2.0f, 4.0f, -1.5f, 1.5f, -1.0f, 1.0f);
-        shader.SetUniformMat4f("u_MVP", proj);
+        glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5, 0, 0));
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(1, 1, 0));
+
+        glm::mat4 mvp = proj * view * model;
+
+        shader.SetUniformMat4f("u_MVP", mvp);
         // note that this is allowed, the call to glVertexAttribPointer registered VBO as the    vertex attribute's bound vertex buffer object so afterwards we can safely unbind
         
         // You can unbind the VAO afterwards so other VAO calls won't accidentally modify   this VAO, but this rarely happens. Modifying other
@@ -118,6 +128,18 @@ int main()
         shader.UnBind();
 
         Renderer renderer;
+
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+        ImGui::StyleColorsDark();
+        ImGui_ImplGlfw_InitForOpenGL(window, true);
+        ImGui_ImplOpenGL3_Init(glsl_version);
+
+        bool show_demo_window = true;
+        bool show_another_window = false;
+        ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
         // render loop
         // -----------
         while (!glfwWindowShouldClose(window))
@@ -131,6 +153,10 @@ int main()
             //glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             renderer.Clear();
 
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+
             shader.Bind();
 
             double  timeValue = glfwGetTime();
@@ -142,7 +168,29 @@ int main()
             
             renderer.Draw(va, ib, shader);
 
+            {
+                static float f = 0.0f;
+                static int counter = 0;
 
+                ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+
+                ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+                ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+                ImGui::Checkbox("Another Window", &show_another_window);
+
+                ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+                ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+
+                if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+                    counter++;
+                ImGui::SameLine();
+                ImGui::Text("counter = %d", counter);
+
+                ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+                ImGui::End();
+            }
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
                 // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved    etc.)
                 //  -------------------------------------------------------------------------------
             GLCall(glfwSwapBuffers(window));
@@ -153,6 +201,9 @@ int main()
         // ------------------------------------------------------------------------
         //glDeleteVertexArrays(1, &VAO);
     }
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui::DestroyContext();
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
     glfwTerminate();
