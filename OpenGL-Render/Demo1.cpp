@@ -76,10 +76,7 @@ int main()
     shader.SetUniform1i("u_Texture", 0);
     
 
-   
     // set up vertex data (and buffer(s)) and configure vertex attributes
-    // ------------------------------------------------------------------
-    // add a new set of vertices to form a second triangle (a total of 6 vertices); the vertex attribute configuration remains the same (still one 3-float position vector per vertex)
     {
         float vertices[] = {
             // first triangle
@@ -110,13 +107,9 @@ int main()
 
 
         IndexBuff ib(indices, 6);
-        glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+        glm::mat4 proj = glm::ortho(-4.0f, 4.0f, -3.0f, 3.0f, -1.0f, 1.0f);
         glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5, 0, 0));
-        // note that this is allowed, the call to glVertexAttribPointer registered VBO as the    vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-        
-        // You can unbind the VAO afterwards so other VAO calls won't accidentally modify   this VAO, but this rarely happens. Modifying other
-        // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind   VAOs (nor VBOs) when it's not directly necessary.
-        //GLCall(glBindVertexArray(0));
+       
         va.UnBind();
         vbo.UnBind();
         ib.UnBind();
@@ -131,48 +124,47 @@ int main()
         ImGui::StyleColorsDark();
         ImGui_ImplGlfw_InitForOpenGL(window, true);
         ImGui_ImplOpenGL3_Init(glsl_version);
-        glm::vec3 translation(0.5, 0.5, 0);
+        glm::vec3 translationA(0, 0, 0);
+        glm::vec3 translationB(2.5, 2.5, 0);
 
-        bool show_demo_window = true;
-        bool show_another_window = false;
-        ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
         // render loop
         // -----------
         while (!glfwWindowShouldClose(window))
         {
-            // input
-            // -----
             processInput(window);
 
-            // render
-            // ------
-            //glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             renderer.Clear();
 
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
+            {
+                glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA);
+                glm::mat4 mvp = proj * view * model;
 
+                shader.Bind();
+                shader.SetUniformMat4f("u_MVP", mvp);
+                renderer.Draw(va, ib, shader);
+            }
+           
+
+            {
+                glm::mat4 model = glm::translate(glm::mat4(1.0f), translationB);
+                glm::mat4 mvp = proj * view * model;
+
+                shader.Bind();
+                shader.SetUniformMat4f("u_MVP", mvp);
+                renderer.Draw(va, ib, shader);
+            }
             
-            glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
-
-            glm::mat4 mvp = proj * view * model;
-
-            shader.Bind();
-
             double  timeValue = glfwGetTime();
             float greenValue = static_cast<float>(sin(timeValue) / 2.0 + 0.5);
             shader.SetUniform4f("u_Color", 0.8f, greenValue, 0.5f, 1.0f);
-            shader.SetUniformMat4f("u_MVP", mvp);
-            // draw our first triangle
-
-            //GLCall(glBindVertexArray(VAO)); // seeing as we only have a single VAO there's no    need to bind it every time, but we'll do so to keep things a bit more     organized
             
-            renderer.Draw(va, ib, shader);
 
             {
-                ImGui::SliderFloat3("tranlation", &translation.x, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-
+                ImGui::SliderFloat3("tranlation_A", &translationA.x, 0.0f, 1.0f);     
+                ImGui::SliderFloat3("tranlation_B", &translationB.x, 0.0f, 1.0f);
                 ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
             }
             ImGui::Render();
@@ -183,9 +175,6 @@ int main()
             GLCall(glfwPollEvents());
         }
 
-        // optional: de-allocate all resources once they've outlived their purpose:
-        // ------------------------------------------------------------------------
-        //glDeleteVertexArrays(1, &VAO);
     }
 
     ImGui_ImplOpenGL3_Shutdown();
