@@ -155,6 +155,7 @@
     <ClCompile Include="IndexBuff.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Tests\TestClearColor.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Vendor\imgui\imgui.cpp" />
     <ClCompile Include="Vendor\imgui\imgui_demo.cpp" />
@@ -203,6 +204,8 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Tests\Test.h" />
+    <ClInclude Include="Tests\TestClearColor.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Vendor\imgui\imconfig.h" />
     <ClInclude Include="Vendor\imgui\imgui.h" />

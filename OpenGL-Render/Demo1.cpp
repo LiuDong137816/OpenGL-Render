@@ -20,6 +20,7 @@
 #include "Vendor/imgui/imgui.h"
 #include "Vendor/imgui/imgui_impl_glfw.h"
 #include "Vendor/imgui/imgui_impl_opengl3.h"
+#include "Tests/TestClearColor.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -102,10 +103,6 @@ int main()
         layout.Push<float>(2);
         va.AddBuff(vbo, layout);
 
-        //GLCall(glEnableVertexAttribArray(0));
-        //GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0));
-
-
         IndexBuff ib(indices, 6);
         glm::mat4 proj = glm::ortho(-4.0f, 4.0f, -3.0f, 3.0f, -1.0f, 1.0f);
         glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5, 0, 0));
@@ -127,18 +124,22 @@ int main()
         glm::vec3 translationA(0, 0, 0);
         glm::vec3 translationB(2.5, 2.5, 0);
 
-        // render loop
-        // -----------
+        test::TestClearColor test;
+        
         while (!glfwWindowShouldClose(window))
         {
             processInput(window);
 
             renderer.Clear();
 
+            test.OnUpdate(0.0);
+            test.OnRender();
+
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
-            {
+            test.OnImGuiRender();
+            /*{
                 glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA);
                 glm::mat4 mvp = proj * view * model;
 
@@ -160,17 +161,15 @@ int main()
             double  timeValue = glfwGetTime();
             float greenValue = static_cast<float>(sin(timeValue) / 2.0 + 0.5);
             shader.SetUniform4f("u_Color", 0.8f, greenValue, 0.5f, 1.0f);
-            
 
             {
                 ImGui::SliderFloat3("tranlation_A", &translationA.x, 0.0f, 1.0f);     
                 ImGui::SliderFloat3("tranlation_B", &translationB.x, 0.0f, 1.0f);
                 ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-            }
+            }*/
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-                // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved    etc.)
-                //  -------------------------------------------------------------------------------
+                
             GLCall(glfwSwapBuffers(window));
             GLCall(glfwPollEvents());
         }
