@@ -124,21 +124,37 @@ int main()
         glm::vec3 translationA(0, 0, 0);
         glm::vec3 translationB(2.5, 2.5, 0);
 
-        test::TestClearColor test;
-        
+        test::Test* currentTest = nullptr;
+        test::TestMenu* testMenu = new test::TestMenu(currentTest);
+        currentTest = testMenu;
+
+        testMenu->RegisterTest<test::TestClearColor>("Clear Color");
+
         while (!glfwWindowShouldClose(window))
         {
             processInput(window);
+            GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
 
             renderer.Clear();
-
-            test.OnUpdate(0.0);
-            test.OnRender();
 
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
-            test.OnImGuiRender();
+
+            if (currentTest)
+            {
+                currentTest->OnUpdate(0.0f);
+                currentTest->OnRender();
+                ImGui::Begin("Test");
+                if (currentTest != testMenu && ImGui::Button("<-"))
+                {
+                    delete currentTest;
+                    currentTest = testMenu;
+                }
+                currentTest->OnImGuiRender();
+                ImGui::End();
+            }
+            
             /*{
                 glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA);
                 glm::mat4 mvp = proj * view * model;
@@ -173,6 +189,9 @@ int main()
             GLCall(glfwSwapBuffers(window));
             GLCall(glfwPollEvents());
         }
+        delete currentTest;
+        if (currentTest != testMenu)
+             delete testMenu;
 
     }
 

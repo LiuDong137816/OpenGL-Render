@@ -155,6 +155,7 @@
     <ClCompile Include="IndexBuff.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Tests\Test.cpp" />
     <ClCompile Include="Tests\TestClearColor.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Vendor\imgui\imgui.cpp" />
