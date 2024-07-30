@@ -2,19 +2,6 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
-#include "Renderer.h"
-#include "VertexBuffLayout.h"
-#include "IndexBuff.h"
-#include "VertexBuff.h"
-#include "VertexArray.h"
-
-#include "Shader.h"
-#include "Texture.h"
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
 
 #include "Vendor/imgui/imgui.h"
 #include "Vendor/imgui/imgui_impl_glfw.h"
@@ -137,7 +124,6 @@ void processInput(GLFWwindow* window)
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
-// ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     // make sure the viewport matches the new window dimensions; note that width and 
