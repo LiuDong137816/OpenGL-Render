@@ -23,16 +23,16 @@ namespace test
 
 
         float vertices[] = {
-            // first triangle
-            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // left 
-             0.5f, -0.5f, 0.0f,  1.0f, 0.0f, // right
-             0.5f, 0.5f, 0.0f,  1.0f, 1.0f, // top 
-             -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,// top 
+            // Vetex Texture Color
+            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f, //  
+             0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f, // 
+             0.5f, 0.5f, 0.0f,  1.0f, 1.0f, 0.18f, 0.6f, 0.96f, 1.0f,
+             -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.18f, 0.6f, 0.96f, 1.0f,
 
-              1.5f, 1.5f, 0.0f, 0.0f, 0.0f,  // left 
-             2.5f, 1.5f, 0.0f,  1.0f, 0.0f, // right
-             2.5f, 2.5f, 0.0f,  1.0f, 1.0f, // top 
-             1.5f, 2.5f, 0.0f, 0.0f, 1.0f// top 
+              1.5f, 1.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.13f, 0.24f, 1.0f,
+             2.5f, 1.5f, 0.0f,  1.0f, 0.0f, 1.0f, 0.13f, 0.24f, 1.0f,
+             2.5f, 2.5f, 0.0f,  1.0f, 1.0f, 1.0f, 0.13f, 0.24f, 1.0f,
+             1.5f, 2.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.13f, 0.24f, 1.0f
         };
 
         unsigned int indices[]
@@ -47,10 +47,11 @@ namespace test
         GLCall(glEnable(GL_BLEND));
         GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-        m_VertexBuffer = std::make_unique<VertexBuff>(vertices, 8 * 5 * sizeof(float));
+        m_VertexBuffer = std::make_unique<VertexBuff>(vertices, 8 * 9 * sizeof(float));
         VertexBuffLayout layout;
         layout.Push<float>(3);
         layout.Push<float>(2);
+        layout.Push<float>(4);
         m_VAO->AddBuff(*m_VertexBuffer, layout);
 
         m_Proj = glm::ortho(-4.0f, 4.0f, -3.0f, 3.0f, -1.0f, 1.0f);
