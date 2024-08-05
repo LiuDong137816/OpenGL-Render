@@ -29,10 +29,10 @@ namespace test
            0.5f, 0.5f, 0.0f,   0.18f, 0.6f, 0.96f, 1.0f, 1.0f, 1.0f, 0.0f,
            -0.5f, 0.5f, 0.0f,  0.18f, 0.6f, 0.96f, 1.0f, 0.0f, 1.0f, 0.0f,
 
-           1.5f, 1.5f, 0.0f,  1.0f, 0.13f, 0.24f, 1.0f, 0.0f, 0.0f, 1.0f,
-           2.5f, 1.5f, 0.0f,   1.0f, 0.13f, 0.24f, 1.0f, 1.0f, 0.0f, 1.0f,
-           2.5f, 2.5f, 0.0f,   1.0f, 0.13f, 0.24f, 1.0f, 1.0f, 1.0f, 1.0f,
-           1.5f, 2.5f, 0.0f,   1.0f, 0.13f, 0.24f, 1.0f,  0.0f, 1.0f, 1.0f
+           1.5f, 1.5f, 0.0f,   0.2f, 0.83f, 0.24f, 1.0f, 0.0f, 0.0f, 1.0f,
+           2.5f, 1.5f, 0.0f,   0.2f, 0.83f, 0.24f, 1.0f, 1.0f, 0.0f, 1.0f,
+           2.5f, 2.5f, 0.0f,   0.2f, 0.83f, 0.24f, 1.0f, 1.0f, 1.0f, 1.0f,
+           1.5f, 2.5f, 0.0f,   0.2f, 0.83f, 0.24f, 1.0f,  0.0f, 1.0f, 1.0f
         };
 
         unsigned int indices[]
@@ -62,7 +62,13 @@ namespace test
         m_IndexBuffer = std::make_unique<IndexBuff>(indices, 12);
         m_Textures.push_back(std::make_unique<Texture>(projectPath + "/Vendor/stb_image/Retangle.png"));
         m_Textures.push_back(std::make_unique<Texture>(projectPath + "/Vendor/stb_image/Retangle1.png"));
-        int samples[2] = { 0, 1 };
+
+        int samples[2] = { 0 };
+        for (int i = 0; i < m_Textures.size(); ++i)
+        {
+            samples[i] = i;
+            m_Textures[i]->Bind(i);
+        }
         m_Shader->SetUniform1iv("u_Textures", samples);
 	}
 
@@ -80,9 +86,6 @@ namespace test
 		GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
         Renderer renderer;
-
-        m_Textures[0]->Bind();
-        m_Textures[1]->Bind(1);
 
         {
             glm::mat4 model = glm::translate(glm::mat4(1.0f), m_TranslationA);
