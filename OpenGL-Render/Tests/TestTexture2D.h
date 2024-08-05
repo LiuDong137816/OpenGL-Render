@@ -26,7 +26,7 @@ namespace test
 		std::unique_ptr<VertexArray> m_VAO;
 		std::unique_ptr<IndexBuff> m_IndexBuffer;
 		std::unique_ptr<Shader> m_Shader;
-		std::unique_ptr<Texture> m_Texture;
+		std::vector<std::unique_ptr<Texture>> m_Textures;
 		std::unique_ptr<VertexBuff> m_VertexBuffer;
 	};
 

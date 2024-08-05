@@ -60,8 +60,10 @@ namespace test
 
         m_Shader->Bind();
         m_IndexBuffer = std::make_unique<IndexBuff>(indices, 12);
-        m_Texture = std::make_unique<Texture>(projectPath + "/Vendor/stb_image/Retangle.png");
-        m_Shader->SetUniform1i("u_Texture", 0);
+        m_Textures.push_back(std::make_unique<Texture>(projectPath + "/Vendor/stb_image/Retangle.png"));
+        m_Textures.push_back(std::make_unique<Texture>(projectPath + "/Vendor/stb_image/Retangle1.png"));
+        int samples[2] = { 0, 1 };
+        m_Shader->SetUniform1iv("u_Textures", samples);
 	}
 
 	TestTexture2D::~TestTexture2D()
@@ -79,7 +81,8 @@ namespace test
 
         Renderer renderer;
 
-        m_Texture->Bind();
+        m_Textures[0]->Bind();
+        m_Textures[1]->Bind(1);
 
         {
             glm::mat4 model = glm::translate(glm::mat4(1.0f), m_TranslationA);
